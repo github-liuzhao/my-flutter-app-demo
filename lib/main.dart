@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
 import './products_manager.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // debugPaintSizeEnabled = true;
+  // debugPaintPointersEnabled = true;
+  // debugPaintBaselinesEnabled = true;
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  final String firstProduct = 'first product';
+  final String firstProduct = 'first default product';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // debugShowMaterialGrid: true,
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.green,
@@ -17,7 +24,7 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: Text('EaseList'),
           ),
-          body: ProductsManager(firstProduct) // 传递数据给statefulwidget
+          body: ProductsManager() // 传递数据给statefulwidget
       ),
     );
   }

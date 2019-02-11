@@ -10,9 +10,9 @@ class ProductsControl extends StatelessWidget {
     return RaisedButton(
       color: Theme.of(context).primaryColor,
       onPressed: () {
-        _addProduct('add product'); // 触发父组件函数
+        _addProduct('product number'); // 触发父组件函数
       },
-      child: Text('clike me'),
+      child: Text('add product'),
     );
   }
 }

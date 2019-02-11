@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import './products.dart';
 import './products_control.dart';
 
-
 class ProductsManager extends StatefulWidget {
   final String firstProduct;
-  ProductsManager(this.firstProduct) {
+  ProductsManager({this.firstProduct}) {
     print('[ProductsManager Widget] constructor');
   }
 
@@ -16,14 +15,16 @@ class ProductsManager extends StatefulWidget {
   }
 }
 
-
 class _ProductManagerState extends State<ProductsManager> {
   final List<String> _products = [];
 
   @override
   void initState() {
     print('[ProductsManager Widget] initState');
-    _products.add(widget.firstProduct); // 设置初始化数据， data can be passed from widget to State by useing the special 'widget' property
+    if(widget.firstProduct != null){
+      // 设置初始化数据， data can be passed from widget to State by useing the special 'widget' property
+      _products.add(widget.firstProduct); 
+    }
     super.initState();
   }
 
@@ -44,8 +45,13 @@ class _ProductManagerState extends State<ProductsManager> {
     print('[ProductsManager Widget] build');
     return Column(
       children: <Widget>[
-        Container(margin: EdgeInsets.all(10.0), child: ProductsControl(_addProduct)), // 方法下传
-        Products(_products) // statelesswidget传递数据
+        Container(
+          margin: EdgeInsets.all(10.0),
+          child: ProductsControl(_addProduct)
+        ), // 方法下传
+        Expanded(
+          child: Products(_products),
+        ) // statelesswidget传递数据
       ],
     );
   }
