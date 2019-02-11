@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Products extends StatelessWidget {
+  
   final List<String> products;
   Products(this.products) {
     print('[Products Widget] constructor');
   }
+
   @override
   Widget build(BuildContext context) {
     print('[Products Widget] build');

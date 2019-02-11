@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import './products.dart';
+import './products_control.dart';
+
 
 class ProductsManager extends StatefulWidget {
-  
-  final String startMsg;
-  ProductsManager(this.startMsg) {
+  final String firstProduct;
+  ProductsManager(this.firstProduct) {
     print('[ProductsManager Widget] constructor');
   }
 
@@ -15,13 +16,14 @@ class ProductsManager extends StatefulWidget {
   }
 }
 
+
 class _ProductManagerState extends State<ProductsManager> {
-  List<String> _products = [];
+  final List<String> _products = [];
 
   @override
   void initState() {
     print('[ProductsManager Widget] initState');
-    _products.add(widget.startMsg);
+    _products.add(widget.firstProduct); // 设置初始化数据， data can be passed from widget to State by useing the special 'widget' property
     super.initState();
   }
 
@@ -31,23 +33,19 @@ class _ProductManagerState extends State<ProductsManager> {
     super.didUpdateWidget(oldWidget);
   }
 
+  void _addProduct(String product) {
+    setState(() {
+      _products.add(product); // setState触发调用build
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print('[ProductsManager Widget] build');
     return Column(
       children: <Widget>[
-        Container(
-          margin: EdgeInsets.all(10.0),
-          child: RaisedButton(
-            onPressed: () {
-              setState(() {
-                _products.add('pro added');
-              });
-            },
-            child: Text('clike me'),
-          ),
-        ),
-        Products(_products)
+        Container(margin: EdgeInsets.all(10.0), child: ProductsControl(_addProduct)), // 方法下传
+        Products(_products) // statelesswidget传递数据
       ],
     );
   }
