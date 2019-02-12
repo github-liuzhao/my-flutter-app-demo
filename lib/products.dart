@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import './pages/product.dart';
 
 class Products extends StatelessWidget {
-
   final List<Map<String, String>> products;
-  Products(this.products) {
+  final Function delProductItem;
+
+  Products(this.products, {this.delProductItem}) {
     print('[Products Widget] constructor');
   }
 
@@ -25,8 +26,14 @@ class Products extends StatelessWidget {
                     builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
                     // no matter if load data with route or if you load them by embedding them into anther widget, 
                     // use the constructor to pass data around
-                  ) //转场动画
-                ),
+                  ) // MaterialPageRoute自带转场动画
+                )
+                .then((value) {
+                // this is essentially an ongoing operation where we can listen to when the page is removed
+                  if(value == true){
+                    delProductItem(index);
+                  }
+                }), 
               )
             ],
           )

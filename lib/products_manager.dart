@@ -3,7 +3,6 @@ import './products.dart';
 import './products_control.dart';
 
 class ProductsManager extends StatefulWidget {
-
   final Map<String, String> firstProduct;
   ProductsManager({this.firstProduct}) {
     print('[ProductsManager Widget] constructor');
@@ -22,9 +21,9 @@ class _ProductManagerState extends State<ProductsManager> {
   @override
   void initState() {
     print('[ProductsManager Widget] initState');
-    if(widget.firstProduct != null){
+    if (widget.firstProduct != null) {
       // 设置初始化数据， data can be passed from widget to State by useing the special 'widget' property
-      _products.add(widget.firstProduct); 
+      _products.add(widget.firstProduct);
     }
     super.initState();
   }
@@ -37,7 +36,13 @@ class _ProductManagerState extends State<ProductsManager> {
 
   void _addProduct(Map<String, String> product) {
     setState(() {
-      _products.add(product); // setState触发调用build
+      _products.add(product); // setState会触发调用build
+    });
+  }
+
+  void _delProductItem(int index) {
+    setState(() {
+      _products.removeAt(index);
     });
   }
 
@@ -51,8 +56,11 @@ class _ProductManagerState extends State<ProductsManager> {
           child: ProductsControl(_addProduct)
         ), // 方法下传
         Expanded(
-          child: Products(_products),
-        ) // statelesswidget传递数据
+          child: Products(_products, delProductItem: _delProductItem),
+          // statelesswidget传递数据
+          // 一个位置参数 positoin parameters，一个命名参数 named parameters
+          // the expanded widget will take the remaining space after the the other widgets
+        ), 
       ],
     );
   }

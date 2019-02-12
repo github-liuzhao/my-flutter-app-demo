@@ -10,7 +10,7 @@ class ProductsControl extends StatelessWidget {
     return RaisedButton(
       color: Theme.of(context).primaryColor,
       onPressed: () {
-        _addProduct(<String, String>{'title': 'product item', 'image': 'assets/01.png'}); // 触发父组件函数
+        _addProduct(<String, String>{'title': 'product item', 'image': 'assets/01.jpg'}); // 触发父组件函数
       },
       child: Text('add product'),
     );

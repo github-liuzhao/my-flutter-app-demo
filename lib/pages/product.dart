@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class ProductPage extends StatelessWidget {
 
@@ -10,7 +11,13 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // Creates a widget that registers a callback to veto attempts by the user to dismiss the enclosing [ModalRoute].
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.pop(context, false);
+        return Future.value(false);
+      },
+      child: Scaffold(
         appBar: AppBar(
           title: Text(title),
         ),
@@ -27,11 +34,15 @@ class ProductPage extends StatelessWidget {
                 margin: EdgeInsets.all(10.0),
                 child: RaisedButton(
                   child: Text('go back'),
-                  onPressed: () => Navigator.pop(context),
+                  // how to pass infomation back to the last page?
+                  // pass true as value
+                  // what if we press the physical or software back button?? ----- willPopScope
+                  onPressed: () => Navigator.pop(context, true),
                 ),
               ),
             ],
           ),
-      );
+      ),
+    );
   }
 }
