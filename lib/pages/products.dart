@@ -8,6 +8,7 @@ class ProductsPage extends StatelessWidget {
     return Scaffold(
       // Scaffold creates a new 'page' in you app
       drawer: Drawer(child: Column(children: <Widget>[
+        // Creates a material design drawer.
         AppBar(
           automaticallyImplyLeading: false,
           title: Text('menu bar'),
@@ -15,12 +16,14 @@ class ProductsPage extends StatelessWidget {
         ListTile(
           title: Text('products manager'),
           onTap: (){
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ProductsAdminPage()));
+            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ProductsAdminPage()));
+            // in this way we alwarys creating the meterial page route
+            Navigator.pushReplacementNamed(context, '/admin');
           },
         )
       ],),),
       appBar: AppBar(
-        title: Text('products'),
+        title: Text('Products'),
       ),
       body: ProductsManager() // 传递初始数据给statefulwidget
     );

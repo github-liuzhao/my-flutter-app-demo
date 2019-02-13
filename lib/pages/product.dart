@@ -33,7 +33,7 @@ class ProductPage extends StatelessWidget {
               Container(
                 margin: EdgeInsets.all(10.0),
                 child: RaisedButton(
-                  child: Text('go back'),
+                  child: Text('del'),
                   // how to pass infomation back to the last page?
                   // pass true as value
                   // what if we press the physical or software back button?? ----- willPopScope
