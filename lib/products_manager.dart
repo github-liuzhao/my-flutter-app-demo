@@ -22,7 +22,7 @@ class _ProductManagerState extends State<ProductsManager> {
   void initState() {
     print('[ProductsManager Widget] initState');
     if (widget.firstProduct != null) {
-      // 设置初始化数据， data can be passed from widget to State by useing the special 'widget' property
+      // 设置statefulwidget初始化数据， data can be passed from widget to State by useing the special 'widget' property
       _products.add(widget.firstProduct);
     }
     super.initState();
