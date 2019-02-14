@@ -22,10 +22,16 @@ class ProductsPage extends StatelessWidget {
         ),
         ListTile(
           title: Text('products manager'),
-          onTap: (){
+          onTap: () {
             // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ProductsAdminPage()));
             // in this way we alwarys creating the meterial page route
             Navigator.pushReplacementNamed(context, '/admin');
+          },
+        ),
+        ListTile(
+          title: Text('unknowroute'),
+          onTap: () {
+            Navigator.pushReplacementNamed(context, '/sdfasf');
           },
         )
       ],),),

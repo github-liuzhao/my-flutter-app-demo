@@ -65,6 +65,9 @@ class _MyApp extends State<MyApp> {
           );
         }
       },
+      onUnknownRoute: (RouteSettings settings) {
+        return MaterialPageRoute(builder: (BuildContext context) => ProductsPage(products: _products, addProduct: _addProduct, delProductItem: _delProductItem),);
+      },
     );
   }
 }

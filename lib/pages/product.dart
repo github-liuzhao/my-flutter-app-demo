@@ -13,6 +13,24 @@ class ProductPage extends StatelessWidget {
   // no matter if load data with route or if you load them by embedding them into anther widget, 
   // use the constructor to pass data around
 
+  void _showWarningDilog(BuildContext context){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        title: Text('提示'),
+        content: Text('heheheheh'),
+        actions: <Widget>[
+          FlatButton(child: Text('cancel'), onPressed: () {
+            Navigator.pop(context);
+          },),
+          FlatButton(child: Text('ok'), onPressed: (){
+            Navigator.pop(context);
+            Navigator.pop(context, true);
+          },)
+        ],
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Creates a widget that registers a callback to veto attempts by the user to dismiss the enclosing [ModalRoute].
@@ -42,7 +60,8 @@ class ProductPage extends StatelessWidget {
                   // how to pass infomation back to the last page?
                   // pass true as value
                   // what if we press the physical or software back button?? ----- willPopScope
-                  onPressed: () => Navigator.pop(context, true),
+                  onPressed: () => _showWarningDilog(context)
+                  // Navigator.pop(context, true),
                 ),
               ),
             ],

@@ -19,20 +19,30 @@ class Products extends StatelessWidget {
             children: <Widget>[
               FlatButton(
                 child: Text('查看'),
-                onPressed: () => Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+                onPressed: () {
+
+                  Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+                  .then((bool value) {
+                    if(value == true){
+                      print('del');
+                      delProductItem(index);
+                    }
+                  });
+
                   // MaterialPageRoute(
                   //   builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
                   // )
                   // MaterialPageRoute自带转场动画
                   // no matter if load data with route or if you load them by embedding them into anther widget, 
                   // use the constructor to pass data around
-                .then((bool value) {
-                // this is essentially an ongoing operation where we can listen to when the page is removed
-                  if(value == true){
-                    delProductItem(index);
-                  }
-                }), 
-              )
+                  // Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+                  // .then((bool value) {
+                  // this is essentially an ongoing operation where we can listen to when the page is removed
+                    // if(value == true){
+                    //   delProductItem(index);
+                    // }
+                //}), 
+              })
             ],
           )
         ],
