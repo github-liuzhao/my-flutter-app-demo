@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import './pages/product.dart';
 
 class Products extends StatelessWidget {
   final List<Map<String, String>> products;
   final Function delProductItem;
 
-  Products(this.products, {this.delProductItem}) {
+  Products({this.products, this.delProductItem}) {
     print('[Products Widget] constructor');
   }
 
@@ -20,15 +19,14 @@ class Products extends StatelessWidget {
             children: <Widget>[
               FlatButton(
                 child: Text('查看'),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
-                    // no matter if load data with route or if you load them by embedding them into anther widget, 
-                    // use the constructor to pass data around
-                  ) // MaterialPageRoute自带转场动画
-                )
-                .then((value) {
+                onPressed: () => Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+                  // MaterialPageRoute(
+                  //   builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
+                  // )
+                  // MaterialPageRoute自带转场动画
+                  // no matter if load data with route or if you load them by embedding them into anther widget, 
+                  // use the constructor to pass data around
+                .then((bool value) {
                 // this is essentially an ongoing operation where we can listen to when the page is removed
                   if(value == true){
                     delProductItem(index);
@@ -48,6 +46,7 @@ class Products extends StatelessWidget {
     );
     if (products.length > 0) {
       productList = ListView.builder(
+        // Creates a scrollable, linear array of widgets that are created on demand.
         itemBuilder: _buildProductItem,
         itemCount: products.length,
       );

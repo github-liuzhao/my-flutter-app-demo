@@ -1,3 +1,7 @@
+/**
+ * @file product详情
+ */
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -13,6 +17,7 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Creates a widget that registers a callback to veto attempts by the user to dismiss the enclosing [ModalRoute].
     return WillPopScope(
+      // 监听页面pop事件，可以阻止pop发生
       onWillPop: () {
         Navigator.pop(context, false);
         return Future.value(false);

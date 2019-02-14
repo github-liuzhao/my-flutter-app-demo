@@ -1,8 +1,15 @@
+
 import 'package:flutter/material.dart';
 import '../products_manager.dart';
-import './products_admin.dart';
 
 class ProductsPage extends StatelessWidget {
+  final List<Map<String, String>> products;
+  final Function addProduct;
+  final Function delProductItem;
+
+  ProductsPage({this.products, this.addProduct, this.delProductItem}){
+    print('[Products Page] contructor');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +32,7 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Products'),
       ),
-      body: ProductsManager() // 传递初始数据给statefulwidget
+      body: ProductsManager(products: products, addProduct: addProduct, delProductItem: delProductItem) // 传递初始数据给statefulwidget
     );
   }
 }
