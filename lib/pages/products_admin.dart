@@ -1,16 +1,12 @@
-/*
- * @Description: In User Settings Edit
- * @Author: your name
- * @Date: 2019-02-13 10:51:24
- * @LastEditTime: 2019-02-14 11:29:25
- * @LastEditors: your name
- */
-
 import 'package:flutter/material.dart';
 import './product_create.dart';
 import './product_list.dart';
 
 class ProductsAdminPage extends StatelessWidget {
+  
+  final Function addProduct;
+  ProductsAdminPage(this.addProduct);
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -28,7 +24,7 @@ class ProductsAdminPage extends StatelessWidget {
               ListTile(
                 title: Text('products'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/');
+                  Navigator.pushReplacementNamed(context, '/products');
                   // Navigator.pushNamed(context, '/');
                 },
               )
@@ -52,7 +48,7 @@ class ProductsAdminPage extends StatelessWidget {
         ),
         body: TabBarView(children: <Widget>[
           // Creates a page view with one child per tab.
-          ProductCreate(),
+          ProductCreate(addProduct),
           ProductList(),
         ],),
       ),

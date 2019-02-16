@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
-// import './pages/auth.dart';
+import './pages/auth.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
 import './pages/product.dart';
 
 void main() {
-  // debugPaintSizeEnabled = true;
+  // debugPaintSizeEnabled = true; // show the visual layout
   // debugPaintPointersEnabled = true;
   // debugPaintBaselinesEnabled = true;
   runApp(MyApp());
@@ -20,9 +20,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyApp extends State<MyApp> {
-  List<Map<String, String>> _products = [];
+  List<Map<String, dynamic>> _products = [];
 
-  void _addProduct(Map<String, String> product) {
+  void _addProduct(Map<String, dynamic> product) {
+    print(product);
     setState(() {
       _products.add(product); // setState会触发调用build
     });
@@ -42,12 +43,14 @@ class _MyApp extends State<MyApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.green,
-        accentColor: Colors.greenAccent
+        accentColor: Colors.greenAccent,
+        fontFamily: 'Oswald'
       ),
       routes: <String, WidgetBuilder>{
         // route registry
-        '/': (BuildContext context) => ProductsPage(products: _products, addProduct: _addProduct, delProductItem: _delProductItem),
-        '/admin': (BuildContext context) => ProductsAdminPage(),
+        '/': (BuildContext context) => AuthPage(),
+        '/products': (BuildContext context) => ProductsPage(products: _products, addProduct: _addProduct, delProductItem: _delProductItem),
+        '/admin': (BuildContext context) => ProductsAdminPage(_addProduct),
       },
       onGenerateRoute: (RouteSettings settings) {
         // onGenerateRoute is excuted when we navigete to a named route

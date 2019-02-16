@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Products extends StatelessWidget {
-  final List<Map<String, String>> products;
+  final List<Map<String, dynamic>> products;
   final Function delProductItem;
 
   Products({this.products, this.delProductItem}) {
@@ -12,15 +12,18 @@ class Products extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.asset(products[index]['image']),
-          Text(products[index]['title']),
+          Container(
+            margin: EdgeInsets.all(10.0),
+            child: Image.asset(products[index]['image']),
+          ),
+          SizedBox(height: 10.0,),
+          Text(products[index]['title'], style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Oswald', fontSize: 20.0), ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton(
-                child: Text('查看'),
+                child: Text('check details'),
                 onPressed: () {
-
                   Navigator.pushNamed<bool>(context, '/product/' + index.toString())
                   .then((bool value) {
                     if(value == true){
@@ -52,7 +55,7 @@ class Products extends StatelessWidget {
 
   Widget _buildProductList() {
     Widget productList = Center(
-      child: Text('click button, add a new product'),
+      child: Text('product list is empty'),
     );
     if (products.length > 0) {
       productList = ListView.builder(
