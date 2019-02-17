@@ -16,36 +16,61 @@ class Products extends StatelessWidget {
             margin: EdgeInsets.all(10.0),
             child: Image.asset(products[index]['image']),
           ),
-          SizedBox(height: 10.0,),
-          Text(products[index]['title'], style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Oswald', fontSize: 20.0), ),
+          SizedBox(
+            height: 10.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center, 
+            children: <Widget>[
+              Text(
+                products[index]['title'],
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Oswald',
+                    fontSize: 20.0),
+              ),
+              SizedBox(
+                width: 10.0,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(4.0)),
+                child: Text('\$${products[index]['price'].toString()}', style: TextStyle(color: Colors.white, fontSize: 12.0)),
+              ),
+            ]
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(4.0)),
+            child: Padding(child: Text('Beijing, CHINA'), padding: EdgeInsets.all(2.0),)
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton(
-                child: Text('check details'),
-                onPressed: () {
-                  Navigator.pushNamed<bool>(context, '/product/' + index.toString())
-                  .then((bool value) {
-                    if(value == true){
-                      print('del');
-                      delProductItem(index);
-                    }
-                  });
+                  child: Text('check details'),
+                  onPressed: () {
+                    Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+                    .then((bool value) {
+                      if (value == true) {
+                        print('del');
+                        delProductItem(index);
+                      }
+                    });
 
-                  // MaterialPageRoute(
-                  //   builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
-                  // )
-                  // MaterialPageRoute自带转场动画
-                  // no matter if load data with route or if you load them by embedding them into anther widget, 
-                  // use the constructor to pass data around
-                  // Navigator.pushNamed<bool>(context, '/product/' + index.toString())
-                  // .then((bool value) {
-                  // this is essentially an ongoing operation where we can listen to when the page is removed
+                    // MaterialPageRoute(
+                    //   builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
+                    // )
+                    // MaterialPageRoute自带转场动画
+                    // no matter if load data with route or if you load them by embedding them into anther widget,
+                    // use the constructor to pass data around
+                    // Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+                    // .then((bool value) {
+                    // this is essentially an ongoing operation where we can listen to when the page is removed
                     // if(value == true){
                     //   delProductItem(index);
                     // }
-                //}), 
-              })
+                    //}),
+                  })
             ],
           )
         ],

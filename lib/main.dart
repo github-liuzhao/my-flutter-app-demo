@@ -42,9 +42,8 @@ class _MyApp extends State<MyApp> {
       // debugShowMaterialGrid: true,
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.green,
-        accentColor: Colors.greenAccent,
-        fontFamily: 'Oswald'
+        primaryColor: Colors.blue,
+        accentColor: Colors.blueAccent
       ),
       routes: <String, WidgetBuilder>{
         // route registry
