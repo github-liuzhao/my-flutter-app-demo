@@ -13,7 +13,7 @@ class ProductCreate extends StatefulWidget {
 class _ProductCreate extends State<ProductCreate> {
   String _title;
   double _price;
-  String _content;
+  String _desc;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class _ProductCreate extends State<ProductCreate> {
             decoration: InputDecoration(labelText: 'content required',),
             onChanged: (String value) {
               setState(() {
-                _content = value;
+                _desc = value;
               });
             },
           ),
@@ -52,7 +52,7 @@ class _ProductCreate extends State<ProductCreate> {
             textColor: Colors.white,
             child: Text('提交'),
             onPressed: (){
-            widget.addProduct(<String, dynamic>{'title': _title, 'price': _price, 'content': _content, 'image': 'assets/01.jpg'});
+            widget.addProduct(<String, dynamic>{'title': _title, 'price': _price, 'desc': _desc, 'image': 'assets/01.jpg'});
             Navigator.pushReplacementNamed(context, '/products');
           },)
         ],

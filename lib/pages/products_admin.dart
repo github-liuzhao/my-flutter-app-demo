@@ -22,6 +22,7 @@ class ProductsAdminPage extends StatelessWidget {
                 title: Text('menu bar'),
               ),
               ListTile(
+                leading: Icon(Icons.list),
                 title: Text('products'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/products');

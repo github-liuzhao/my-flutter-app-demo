@@ -25,9 +25,10 @@ class Products extends StatelessWidget {
               Text(
                 products[index]['title'],
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Oswald',
-                    fontSize: 20.0),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Oswald',
+                  fontSize: 20.0
+                ),
               ),
               SizedBox(
                 width: 10.0,
@@ -46,31 +47,25 @@ class Products extends StatelessWidget {
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.info_outline),
+                color: Theme.of(context).accentColor,
+                onPressed: () {
+                  Navigator.pushNamed<bool>(context, '/product/' + index.toString());
+                  // .then((bool value) {
+                  //   if (value == true) {
+                  //     print('del');
+                  //     delProductItem(index);
+                  //   }
+                  // });
+                }
+              ),
               FlatButton(
-                  child: Text('check details'),
-                  onPressed: () {
-                    Navigator.pushNamed<bool>(context, '/product/' + index.toString())
-                    .then((bool value) {
-                      if (value == true) {
-                        print('del');
-                        delProductItem(index);
-                      }
-                    });
-
-                    // MaterialPageRoute(
-                    //   builder: (BuildContext context) => ProductPage(products[index]['title'], products[index]['image'])
-                    // )
-                    // MaterialPageRoute自带转场动画
-                    // no matter if load data with route or if you load them by embedding them into anther widget,
-                    // use the constructor to pass data around
-                    // Navigator.pushNamed<bool>(context, '/product/' + index.toString())
-                    // .then((bool value) {
-                    // this is essentially an ongoing operation where we can listen to when the page is removed
-                    // if(value == true){
-                    //   delProductItem(index);
-                    // }
-                    //}),
-                  })
+                child: Icon(Icons.favorite_border),
+                textColor: Theme.of(context).accentColor,
+                onPressed: () {
+                }
+              )
             ],
           )
         ],
