@@ -48,7 +48,7 @@ class _MyApp extends State<MyApp> {
       routes: <String, WidgetBuilder>{
         // route registry
         '/': (BuildContext context) => AuthPage(),
-        '/products': (BuildContext context) => ProductsPage(products: _products, addProduct: _addProduct, delProductItem: _delProductItem),
+        '/products': (BuildContext context) => ProductsPage(products: _products, delProductItem: _delProductItem),
         '/admin': (BuildContext context) => ProductsAdminPage(_addProduct),
       },
       onGenerateRoute: (RouteSettings settings) {
@@ -68,7 +68,7 @@ class _MyApp extends State<MyApp> {
         }
       },
       onUnknownRoute: (RouteSettings settings) {
-        return MaterialPageRoute(builder: (BuildContext context) => ProductsPage(products: _products, addProduct: _addProduct, delProductItem: _delProductItem),);
+        return MaterialPageRoute(builder: (BuildContext context) => ProductsPage(products: _products, delProductItem: _delProductItem),);
       },
     );
   }

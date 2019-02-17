@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import './product_price.dart';
 
-class Products extends StatelessWidget {
-  final List<Map<String, dynamic>> products;
-  final Function delProductItem;
+class ProductCard extends StatelessWidget{
 
-  Products({this.products, this.delProductItem}) {
-    print('[Products Widget] constructor');
-  }
+  final Map<String, dynamic> product;
+  final int index;
 
-  Widget _buildProductItem(BuildContext context, int index) {
+  ProductCard(this.product, this.index);
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       child: Column(
         children: <Widget>[
           Container(
             margin: EdgeInsets.all(10.0),
-            child: Image.asset(products[index]['image']),
+            child: Image.asset(product['image']),
           ),
           SizedBox(
             height: 10.0,
@@ -23,7 +24,7 @@ class Products extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center, 
             children: <Widget>[
               Text(
-                products[index]['title'],
+                product['title'],
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Oswald',
@@ -33,11 +34,7 @@ class Products extends StatelessWidget {
               SizedBox(
                 width: 10.0,
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(4.0)),
-                child: Text('\$${products[index]['price'].toString()}', style: TextStyle(color: Colors.white, fontSize: 12.0)),
-              ),
+              ProductPrice(product['price'].toString()),
             ]
           ),
           DecoratedBox(
@@ -71,25 +68,5 @@ class Products extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildProductList() {
-    Widget productList = Center(
-      child: Text('product list is empty'),
-    );
-    if (products.length > 0) {
-      productList = ListView.builder(
-        // Creates a scrollable, linear array of widgets that are created on demand.
-        itemBuilder: _buildProductItem,
-        itemCount: products.length,
-      );
-    }
-    return productList;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print('[Products Widget] build');
-    return _buildProductList();
   }
 }
