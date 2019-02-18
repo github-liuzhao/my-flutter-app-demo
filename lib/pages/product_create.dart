@@ -79,11 +79,16 @@ class _ProductCreate extends State<ProductCreate> {
           _createPriceTextFiled(),
           _createContentTextFiled(),
           RaisedButton(
-            color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: Text('提交'),
             onPressed: _submitForms,
-          )
+          ),
+          // GestureDetector(
+          //   onTap: (){
+          //     print('GestureDetector');
+          //   },
+          //   child: Container(child: Text('click me'),),
+          // ),
         ],
       ),
     );

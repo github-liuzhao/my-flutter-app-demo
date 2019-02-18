@@ -43,7 +43,8 @@ class _MyApp extends State<MyApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.blue,
-        accentColor: Colors.blueAccent
+        accentColor: Colors.blueAccent,
+        buttonColor: Colors.blueAccent
       ),
       routes: <String, WidgetBuilder>{
         // route registry
