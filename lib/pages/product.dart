@@ -83,9 +83,9 @@ class ProductPage extends StatelessWidget {
                 // Navigator.pop(context, true),
                 // what if we press the physical or software back button?? ----- willPopScope
                 Container(
-                  child:  
+                  child:
                     Text(
-                      desc, 
+                      desc,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 18.0, color: Colors.grey,),
                     ),

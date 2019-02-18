@@ -64,9 +64,16 @@ class _ProductCreate extends State<ProductCreate> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 750.0 ? 00.0 : deviceWidth * 0.9;
+    final double paddingWidth = deviceWidth - targetWidth;
+
     return Container(
       margin: EdgeInsets.all(10.0),
       child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: paddingWidth / 2),
+        // ListView always take full avialble width 
         children: <Widget>[
           _createTitleTextFiled(),
           _createPriceTextFiled(),
