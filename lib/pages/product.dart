@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../widget/ui_elements/title_default.dart';
 
 class ProductPage extends StatelessWidget {
   final String title;
@@ -43,6 +44,17 @@ class ProductPage extends StatelessWidget {
   //   });
   // }
 
+  Widget _buildTitleAndPrice(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        DefaultTitle(title),
+        SizedBox(width: 10.0,),
+        Text('\$' + price.toString(), style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0),),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Creates a widget that registers a callback to veto attempts by the user to dismiss the enclosing [ModalRoute].
@@ -64,14 +76,7 @@ class ProductPage extends StatelessWidget {
                 Image.asset(image), // the image is a widget which will take the full avalible width
                 Container(
                   margin: EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(title, style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0),),
-                      SizedBox(width: 10.0,),
-                      Text('\$' + price.toString(), style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0),),
-                    ],
-                  ),
+                  child: _buildTitleAndPrice()
                 ),
                 // how to pass infomation back to the last page?
                 // pass true as value
