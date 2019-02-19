@@ -11,85 +11,102 @@ class ProductCreate extends StatefulWidget {
 }
 
 class _ProductCreate extends State<ProductCreate> {
-  String _title;
-  double _price;
-  String _desc;
+
+  final Map<String, dynamic> _formData = {
+    'title': null,
+    'price': null,
+    'desc': null,
+    'image': 'assets/01.jpg'
+  };
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Widget _createTitleTextFiled() {
-    return TextField(
-      decoration: InputDecoration(labelText: 'name required'),
-      onChanged: (String value) {
-        setState(() {
-          _title = value;
-        });
+    return TextFormField(
+      decoration: InputDecoration(labelText: 'Title required'),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Title can not be empty';
+        }
+      },
+      onSaved: (String value) {
+        _formData['title'] = value;
       },
     );
   }
 
   Widget _createPriceTextFiled() {
-    return TextField(
-      decoration: InputDecoration(labelText: 'price required'),
+    return TextFormField(
+      decoration: InputDecoration(labelText: 'Price required'),
       keyboardType: TextInputType.numberWithOptions(),
-      onChanged: (String value) {
-        setState(() {
-          _price = double.parse(value);
-        });
+      validator: (String value) {
+        if (value.isEmpty ||
+            !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
+          return 'Price requied and should be a number';
+        }
+      },
+      onSaved: (String value) {
+        _formData['price'] = double.parse(value);
       },
     );
   }
 
-  Widget _createContentTextFiled() {
-    return TextField(
+  Widget _createDescTextFiled() {
+    return TextFormField(
       maxLines: 4,
       decoration: InputDecoration(
-        labelText: 'content required',
+        labelText: 'Desc required',
       ),
-      onChanged: (String value) {
-        setState(() {
-          _desc = value;
-        });
+      onSaved: (String value) {
+        _formData['desc'] = value;
       },
     );
   }
 
   void _submitForms() {
-    widget.addProduct(<String, dynamic>{
-      'title': _title,
-      'price': _price,
-      'desc': _desc,
-      'image': 'assets/01.jpg'
-    });
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    widget.addProduct(_formData);
     Navigator.pushReplacementNamed(context, '/products');
   }
 
   @override
   Widget build(BuildContext context) {
-    
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 750.0 ? 00.0 : deviceWidth * 0.9;
     final double paddingWidth = deviceWidth - targetWidth;
 
-    return Container(
-      margin: EdgeInsets.all(10.0),
-      child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: paddingWidth / 2),
-        // ListView always take full avialble width 
-        children: <Widget>[
-          _createTitleTextFiled(),
-          _createPriceTextFiled(),
-          _createContentTextFiled(),
-          RaisedButton(
-            textColor: Colors.white,
-            child: Text('提交'),
-            onPressed: _submitForms,
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        margin: EdgeInsets.all(10.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: paddingWidth / 2),
+            // ListView always take full avialble width
+            children: <Widget>[
+              _createTitleTextFiled(),
+              _createPriceTextFiled(),
+              _createDescTextFiled(),
+              RaisedButton(
+                textColor: Colors.white,
+                child: Text('提交'),
+                onPressed: _submitForms,
+              ),
+              // GestureDetector(
+              //   onTap: (){
+              //     print('GestureDetector');
+              //   },
+              //   child: Container(child: Text('click me'),),
+              // ),
+            ],
           ),
-          // GestureDetector(
-          //   onTap: (){
-          //     print('GestureDetector');
-          //   },
-          //   child: Container(child: Text('click me'),),
-          // ),
-        ],
+        ),
       ),
     );
   }
