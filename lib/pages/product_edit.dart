@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
-class ProductCreate extends StatefulWidget {
+class ProductEdit extends StatefulWidget {
+
   final Function addProduct;
-  ProductCreate(this.addProduct);
+  final Function editProduct;
+  final int productIndex;
+  final Map<String, dynamic> product;
+  ProductEdit({this.addProduct, this.editProduct, this.product, this.productIndex});
 
   @override
   State<StatefulWidget> createState() {
-    return _ProductCreate();
+    return _ProductEdit();
   }
 }
 
-class _ProductCreate extends State<ProductCreate> {
+class _ProductEdit extends State<ProductEdit> {
 
   final Map<String, dynamic> _formData = {
     'title': null,
@@ -24,6 +28,7 @@ class _ProductCreate extends State<ProductCreate> {
   Widget _createTitleTextFiled() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Title required'),
+      initialValue: widget.product == null ? '' : widget.product['title'],
       validator: (String value) {
         if (value.isEmpty) {
           return 'Title can not be empty';
@@ -39,6 +44,7 @@ class _ProductCreate extends State<ProductCreate> {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Price required'),
       keyboardType: TextInputType.numberWithOptions(),
+      initialValue: widget.product == null ? '' : widget.product['price'].toString(),
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
@@ -54,6 +60,7 @@ class _ProductCreate extends State<ProductCreate> {
   Widget _createDescTextFiled() {
     return TextFormField(
       maxLines: 4,
+      initialValue: widget.product == null ? '' : widget.product['desc'],
       decoration: InputDecoration(
         labelText: 'Desc required',
       ),
@@ -68,12 +75,15 @@ class _ProductCreate extends State<ProductCreate> {
       return;
     }
     _formKey.currentState.save();
-    widget.addProduct(_formData);
+    if(widget.product == null){
+      widget.addProduct(_formData);
+    } else {
+      widget.editProduct(_formData, widget.productIndex);
+    }
     Navigator.pushReplacementNamed(context, '/products');
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget productContent () {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 750.0 ? 00.0 : deviceWidth * 0.9;
     final double paddingWidth = deviceWidth - targetWidth;
@@ -109,5 +119,10 @@ class _ProductCreate extends State<ProductCreate> {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.product == null ? productContent() : Scaffold(appBar: AppBar(title: Text('Product edit'),), body: productContent(),);
   }
 }

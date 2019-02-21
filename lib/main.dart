@@ -35,6 +35,12 @@ class _MyApp extends State<MyApp> {
     });
   }
 
+  void _editProduct(Map<String, dynamic>product, int index) {
+    setState(() {
+      _products[index] = product;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,7 +56,7 @@ class _MyApp extends State<MyApp> {
         // route registry
         '/': (BuildContext context) => AuthPage(),
         '/products': (BuildContext context) => ProductsPage(products: _products, delProductItem: _delProductItem),
-        '/admin': (BuildContext context) => ProductsAdminPage(_addProduct),
+        '/admin': (BuildContext context) => ProductsAdminPage(addProduct: _addProduct, editProduct: _editProduct, products: _products),
       },
       onGenerateRoute: (RouteSettings settings) {
         // onGenerateRoute is excuted when we navigete to a named route

@@ -12,7 +12,7 @@ class _AuthState extends State<AuthPage> {
   String _password;
   bool _acceptStatus = false;
 
-  final GlobalKey<FormState> _loginForm =GlobalKey<FormState>();
+  final GlobalKey<FormState> _loginForm = GlobalKey<FormState>();
 
   BoxDecoration _buildDecoratoin() {
     return BoxDecoration(
