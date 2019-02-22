@@ -6,7 +6,9 @@ class ProductEdit extends StatefulWidget {
   final Function editProduct;
   final int productIndex;
   final Map<String, dynamic> product;
-  ProductEdit({this.addProduct, this.editProduct, this.product, this.productIndex});
+  ProductEdit({this.addProduct, this.editProduct, this.product, this.productIndex}){
+    print('ProductEdit widget constructor');
+  }
 
   @override
   State<StatefulWidget> createState() {
