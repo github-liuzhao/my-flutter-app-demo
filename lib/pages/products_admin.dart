@@ -3,13 +3,6 @@ import './product_edit.dart';
 import './product_list.dart';
 
 class ProductsAdminPage extends StatelessWidget {
-
-  final List<Map<String, dynamic>> products;
-  final Function addProduct;
-  final Function editProduct;
-  final Function delProductItem;
-  ProductsAdminPage({this.addProduct, this.products, this.editProduct, this.delProductItem});
-
   Drawer _buildDrewer(BuildContext context){
     return Drawer(
       child: Column(
@@ -60,8 +53,8 @@ class ProductsAdminPage extends StatelessWidget {
         ),
         body: TabBarView(children: <Widget>[
           // Creates a page view with one child per tab.
-          ProductEdit(addProduct: addProduct),
-          ProductList(products: products, editProduct: editProduct, delProductItem: delProductItem),
+          ProductEdit(),
+          ProductList(),
         ],),
       ),
     );

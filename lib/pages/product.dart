@@ -3,15 +3,15 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'dart:async';
+import '../scope-model/products.dart';
 import '../widget/ui_elements/title_default.dart';
+import '../model/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String image;
-  final double price;
-  final String desc;
-  ProductPage(this.title, this.image, this.price, this.desc);
+  final int productIndex;
+  ProductPage(this.productIndex);
   // no matter if load data with route or if you load them by embedding them into anther widget,
   // use the constructor to pass data around
 
@@ -44,13 +44,13 @@ class ProductPage extends StatelessWidget {
   //   });
   // }
 
-  Widget _buildTitleAndPrice(){
+  Widget _buildTitleAndPrice(Product product){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        DefaultTitle(title),
+        DefaultTitle(product.title),
         SizedBox(width: 10.0,),
-        Text('\$' + price.toString(), style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0),),
+        Text('\$' + product.price.toString(), style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0),),
       ],
     );
   }
@@ -64,36 +64,39 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: Container(
-          // margin: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center, // 垂直布局，cross即水平居中，外容器宽度默认跟内部最宽子元素宽度相同
-              children: <Widget>[
-                Image.asset(image), // the image is a widget which will take the full avalible width
-                Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: _buildTitleAndPrice()
-                ),
-                // how to pass infomation back to the last page?
-                // pass true as value
-                // Navigator.pop(context, true),
-                // what if we press the physical or software back button?? ----- willPopScope
-                Container(
-                  child:
-                    Text(
-                      desc,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18.0, color: Colors.grey,),
-                    ),
-                ),
-              ],
+      child: ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model){
+        final Product product = model.products[productIndex];
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(product.title),
           ),
-        ),
-      ),
+          body: Container(
+            // margin: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center, // 垂直布局，cross即水平居中，外容器宽度默认跟内部最宽子元素宽度相同
+                children: <Widget>[
+                  Image.asset(product.image), // the image is a widget which will take the full avalible width
+                  Container(
+                    margin: EdgeInsets.all(10.0),
+                    child: _buildTitleAndPrice(product)
+                  ),
+                  // how to pass infomation back to the last page?
+                  // pass true as value
+                  // Navigator.pop(context, true),
+                  // what if we press the physical or software back button?? ----- willPopScope
+                  Container(
+                    child:
+                      Text(
+                        product.desc,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18.0, color: Colors.grey,),
+                      ),
+                  ),
+                ],
+              ),
+          ),
+        );
+      }),
     );
   }
 }

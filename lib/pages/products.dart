@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../widget/product/products.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Map<String, dynamic>> products;
-  final Function delProductItem;
 
-  ProductsPage({this.products, this.delProductItem}){
+  ProductsPage(){
     print('[Products Page] contructor');
   }
   @override
@@ -46,7 +44,7 @@ class ProductsPage extends StatelessWidget {
             )
           ],
       ),
-      body: Products(products: products, delProductItem: delProductItem)
+      body: Products()
     );
   }
 }

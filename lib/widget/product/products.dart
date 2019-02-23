@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import './product_card.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../../model/product.dart';
+import '../../scope-model/products.dart';
 
 class Products extends StatelessWidget {
-  final List<Map<String, dynamic>> products;
-  final Function delProductItem;
 
-  Products({this.products, this.delProductItem}) {
+  Products() {
     print('[Products Widget] constructor');
   }
 
-  Widget _buildProductList() {
+  Widget _buildProductList(List<Product> products) {
     Widget productList = Center(
       child: Text('product list is empty'),
     );
@@ -28,6 +29,10 @@ class Products extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('[Products Widget] build');
-    return _buildProductList();
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model){
+        return _buildProductList(model.products);
+      },
+    );
   }
 }

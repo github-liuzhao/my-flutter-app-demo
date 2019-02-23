@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
+import 'package:scoped_model/scoped_model.dart';
+import './scope-model/products.dart';
 import './pages/auth.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
@@ -20,63 +22,45 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyApp extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [];
-
-  void _addProduct(Map<String, dynamic> product) {
-    print(product);
-    setState(() {
-      _products.add(product); // setState会触发调用build
-    });
-  }
-
-  void _delProductItem(int index) {
-    setState(() {
-      _products.removeAt(index);
-    });
-  }
-
-  void _editProduct(Map<String, dynamic>product, int index) {
-    setState(() {
-      _products[index] = product;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // MaterialApp is the wrapper for entire app
-      // debugShowMaterialGrid: true,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Colors.blue,
-        accentColor: Colors.blueAccent,
-        buttonColor: Colors.blueAccent
-      ),
-      routes: <String, WidgetBuilder>{
-        // route registry
-        '/': (BuildContext context) => AuthPage(),
-        '/products': (BuildContext context) => ProductsPage(products: _products, delProductItem: _delProductItem),
-        '/admin': (BuildContext context) => ProductsAdminPage(addProduct: _addProduct, editProduct: _editProduct, products: _products, delProductItem: _delProductItem),
-      },
-      onGenerateRoute: (RouteSettings settings) {
-        // onGenerateRoute is excuted when we navigete to a named route
-        // and it only excutes if we navigate a named route which is not registered in our route registry
-        // the function gets an input provied automatically by flutter which is of type route setting
-        // parsing route data manually
-        final List<String> pathElements = settings.name.split('/');
-        if(pathElements[0] != '') {
-          return null;
-        }
-        if(pathElements[1] == 'product') {
-          final int index = int.parse(pathElements[2]);
-          return MaterialPageRoute<bool>(
-            builder: (BuildContext context) => ProductPage(_products[index]['title'], _products[index]['image'], _products[index]['price'], _products[index]['desc'])
-          );
-        }
-      },
-      onUnknownRoute: (RouteSettings settings) {
-        return MaterialPageRoute(builder: (BuildContext context) => ProductsPage(products: _products, delProductItem: _delProductItem),);
-      },
+    return ScopedModel<ProductsModel>(
+      model: ProductsModel(),
+      child: MaterialApp(
+        // MaterialApp is the wrapper for entire app
+        // debugShowMaterialGrid: true,
+        theme: ThemeData(
+          brightness: Brightness.light,
+          primaryColor: Colors.blue,
+          accentColor: Colors.blueAccent,
+          buttonColor: Colors.blueAccent
+        ),
+        routes: <String, WidgetBuilder> {
+          // route registry
+          '/': (BuildContext context) => AuthPage(),
+          '/products': (BuildContext context) => ProductsPage(),
+          '/admin': (BuildContext context) => ProductsAdminPage(),
+        },
+        onGenerateRoute: (RouteSettings settings) {
+          // onGenerateRoute is excuted when we navigete to a named route
+          // and it only excutes if we navigate a named route which is not registered in our route registry
+          // the function gets an input provied automatically by flutter which is of type route setting
+          // parsing route data manually
+          final List<String> pathElements = settings.name.split('/');
+          if(pathElements[0] != '') {
+            return null;
+          }
+          if(pathElements[1] == 'product') {
+            final int index = int.parse(pathElements[2]);
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) => ProductPage(index),
+            );
+          }
+        },
+        onUnknownRoute: (RouteSettings settings) {
+          return MaterialPageRoute(builder: (BuildContext context) => ProductsPage());
+        },
+      )
     );
   }
 }
