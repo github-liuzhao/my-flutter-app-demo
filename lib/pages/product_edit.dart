@@ -74,11 +74,11 @@ class _ProductEdit extends State<ProductEdit> {
     return RaisedButton(
       textColor: Colors.white,
       child: Text('提交'),
-      onPressed: () => _submitForms(model.addProduct, model.editProduct),
+      onPressed: () => _submitForms(model.addProduct, model.editProduct, model),
     );
   }
 
-  void _submitForms(Function addProduct, Function editProduct) {
+  void _submitForms(Function addProduct, Function editProduct, ProductsModel model) {
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -87,7 +87,9 @@ class _ProductEdit extends State<ProductEdit> {
         title: _formData['title'],
         desc: _formData['desc'],
         price: _formData['price'],
-        image: _formData['image']);
+        image: _formData['image'],
+        isMyFavorite: widget.productIndex == null ? false : model.products[widget.productIndex].isMyFavorite
+      );
     if (widget.productIndex == null) {
       addProduct(product);
     } else {

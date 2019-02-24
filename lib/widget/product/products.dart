@@ -18,7 +18,7 @@ class Products extends StatelessWidget {
       productList = ListView.builder(
         // Creates a scrollable, linear array of widgets that are created on demand.
         itemBuilder: (BuildContext context, int index){
-          return ProductCard(products[index], index);
+          return ProductCard(index);
         },
         itemCount: products.length,
       );
@@ -31,7 +31,7 @@ class Products extends StatelessWidget {
     print('[Products Widget] build');
     return ScopedModelDescendant<ProductsModel>(
       builder: (BuildContext context, Widget child, ProductsModel model){
-        return _buildProductList(model.products);
+        return _buildProductList(model.favoriteList);
       },
     );
   }
