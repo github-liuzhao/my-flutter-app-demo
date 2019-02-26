@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../scope-model/products.dart';
+import '../scope-model/main.dart';
 import '../widget/product/products.dart';
 
 class ProductsPage extends StatelessWidget {
@@ -10,7 +10,7 @@ class ProductsPage extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model){
+    return ScopedModelDescendant(builder: (BuildContext context, Widget child, MainModel model){
       return Scaffold(
         // Scaffold creates a new 'page' in you app
         drawer: Drawer(child: Column(children: <Widget>[

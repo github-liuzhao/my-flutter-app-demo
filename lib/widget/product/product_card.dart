@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../../scope-model/products.dart';
+import '../../scope-model/main.dart';
 import './product_price.dart';
 import './product_location.dart';
 import '../ui_elements/title_default.dart';
@@ -13,7 +13,7 @@ class ProductCard extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model){
+    return ScopedModelDescendant(builder: (BuildContext context, Widget child, MainModel model){
       final Product product = model.products[index];
       return Card(
         child: Column(
@@ -36,6 +36,7 @@ class ProductCard extends StatelessWidget{
               ]
             ),
             ProductLocation('beijing, china'),
+            Text(product.userEmail),
             ButtonBar(
               alignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -53,12 +54,12 @@ class ProductCard extends StatelessWidget{
                   }
                 ),
                 IconButton(
-                    icon: product.isMyFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-                    color: Theme.of(context).accentColor,
-                    onPressed: () {
-                      model.toggleFavoritProduct(index);
-                    }
-                  ),
+                  icon: product.isMyFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+                  color: Theme.of(context).accentColor,
+                  onPressed: () {
+                    model.toggleFavoritProduct(index);
+                  }
+                ),
               ],
             )
           ],

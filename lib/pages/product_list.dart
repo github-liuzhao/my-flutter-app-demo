@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './product_edit.dart';
 import '../model/product.dart';
-import '../scope-model/products.dart';
+import '../scope-model/main.dart';
 
 class ProductList extends StatelessWidget {
   ProductList() {
@@ -47,7 +47,7 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model){
+    return ScopedModelDescendant(builder: (BuildContext context, Widget child, MainModel model){
       return ListView.builder(
         itemBuilder: (context, index) => _buildItemBuilder(context, index, model.products, model.delProductItem),
         itemCount: model.products.length

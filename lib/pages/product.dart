@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:async';
-import '../scope-model/products.dart';
+import '../scope-model/main.dart';
 import '../widget/ui_elements/title_default.dart';
 import '../model/product.dart';
 
@@ -64,7 +64,7 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model){
+      child: ScopedModelDescendant(builder: (BuildContext context, Widget child, MainModel model){
         final Product product = model.products[productIndex];
         return Scaffold(
           appBar: AppBar(
@@ -88,6 +88,14 @@ class ProductPage extends StatelessWidget {
                     child:
                       Text(
                         product.desc,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18.0, color: Colors.grey,),
+                      ),
+                  ),
+                  Container(
+                    child:
+                      Text(
+                        product.userEmail,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 18.0, color: Colors.grey,),
                       ),

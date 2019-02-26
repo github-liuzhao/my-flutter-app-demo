@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:scoped_model/scoped_model.dart';
-import './scope-model/products.dart';
+import './scope-model/main.dart';
 import './pages/auth.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
@@ -24,8 +24,8 @@ class MyApp extends StatefulWidget {
 class _MyApp extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
+    return ScopedModel<MainModel>(
+      model: MainModel(),
       child: MaterialApp(
         // MaterialApp is the wrapper for entire app
         // debugShowMaterialGrid: true,
