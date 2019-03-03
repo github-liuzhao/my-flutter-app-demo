@@ -22,24 +22,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyApp extends State<MyApp> {
+  final MainModel model = MainModel();
   @override
   Widget build(BuildContext context) {
     return ScopedModel<MainModel>(
-      model: MainModel(),
+      model: model,
       child: MaterialApp(
         // MaterialApp is the wrapper for entire app
         // debugShowMaterialGrid: true,
         theme: ThemeData(
           brightness: Brightness.light,
-          primaryColor: Colors.blue,
-          accentColor: Colors.blueAccent,
-          buttonColor: Colors.blueAccent
+          primaryColor: Colors.purple,
+          accentColor: Colors.purpleAccent,
+          buttonColor: Colors.purpleAccent
         ),
         routes: <String, WidgetBuilder> {
           // route registry
           '/': (BuildContext context) => AuthPage(),
-          '/products': (BuildContext context) => ProductsPage(),
-          '/admin': (BuildContext context) => ProductsAdminPage(),
+          '/products': (BuildContext context) => ProductsPage(model),
+          '/admin': (BuildContext context) => ProductsAdminPage(model),
         },
         onGenerateRoute: (RouteSettings settings) {
           // onGenerateRoute is excuted when we navigete to a named route
@@ -51,14 +52,14 @@ class _MyApp extends State<MyApp> {
             return null;
           }
           if(pathElements[1] == 'product') {
-            final int index = int.parse(pathElements[2]);
+            final int id = int.parse(pathElements[2]);
             return MaterialPageRoute<bool>(
-              builder: (BuildContext context) => ProductPage(index),
+              builder: (BuildContext context) => ProductPage(id),
             );
           }
         },
         onUnknownRoute: (RouteSettings settings) {
-          return MaterialPageRoute(builder: (BuildContext context) => ProductsPage());
+          return MaterialPageRoute(builder: (BuildContext context) => ProductsPage(model));
         },
       )
     );

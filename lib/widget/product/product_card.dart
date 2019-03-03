@@ -20,7 +20,11 @@ class ProductCard extends StatelessWidget{
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(10.0),
-              child: Image.asset(product.image),
+              // ??AssetImage / Image.assets
+              child: FadeInImage(image: NetworkImage(product.image), 
+              height: 300.0,
+              fit:BoxFit.cover,
+              placeholder: AssetImage('assets/img-placeholder.png'),),
             ),
             SizedBox(
               height: 10.0,
@@ -57,7 +61,7 @@ class ProductCard extends StatelessWidget{
                   icon: product.isMyFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
                   color: Theme.of(context).accentColor,
                   onPressed: () {
-                    model.toggleFavoritProduct(index);
+                    model.toggleDisplayedProductsList(index);
                   }
                 ),
               ],

@@ -75,7 +75,7 @@ class ProductPage extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center, // 垂直布局，cross即水平居中，外容器宽度默认跟内部最宽子元素宽度相同
                 children: <Widget>[
-                  Image.asset(product.image), // the image is a widget which will take the full avalible width
+                  Image.network(product.image), // the image is a widget which will take the full avalible width
                   Container(
                     margin: EdgeInsets.all(10.0),
                     child: _buildTitleAndPrice(product)

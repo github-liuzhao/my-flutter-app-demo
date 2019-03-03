@@ -4,17 +4,31 @@ import './product_edit.dart';
 import '../model/product.dart';
 import '../scope-model/main.dart';
 
-class ProductList extends StatelessWidget {
-  ProductList() {
+class ProductList extends StatefulWidget {
+  final MainModel model;
+  ProductList(this.model) {
     print('ProductList widget constructor');
+  }
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductListState();
+  }
+}
+
+class _ProductListState extends State<ProductList> {
+  
+  @override
+  void initState(){
+    widget.model.fetchProduct();
+    super.initState();
   }
 
   Widget _buildItemBuilder(BuildContext context, int index, List<Product> products, Function delProductItem){
     return Dismissible(
-      key: Key(products[index].title),
+      key: Key(products[index].id.toString()),
       onDismissed: (DismissDirection direction){
         if(direction == DismissDirection.endToStart){
-          delProductItem(index);
+          delProductItem(products[index].id);
         }
       },
       background: Container(
@@ -24,7 +38,7 @@ class ProductList extends StatelessWidget {
         children: <Widget>[
           ListTile(
             leading: CircleAvatar(
-              backgroundImage: AssetImage(products[index].image),
+              backgroundImage: NetworkImage(products[index].image),
             ),
             title: Text(products[index].title),
             subtitle: Text('\$${products[index].price}'),
@@ -32,9 +46,8 @@ class ProductList extends StatelessWidget {
               icon: Icon(Icons.edit),
               onPressed: () {
                 // ??
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return ProductEdit(index);
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+                  return ProductEdit(products[index].id, widget.model);
                 }));
               },
             ),
