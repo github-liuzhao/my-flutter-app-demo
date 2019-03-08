@@ -8,85 +8,54 @@ import 'dart:convert';
 import 'dart:async';
 import '../model/user.dart';
 import '../model/product.dart';
+import '../model/auth.dart';
 
 mixin CollectedProducts on Model {
   List<Product> _products = [];
   User _authenticatedUser;
   bool _isLoading = false;
-
-  Future<Null> fetchProduct() {
-    _isLoading = true;
-    notifyListeners();
-    return http.get('http://localhost:3000/products').then((http.Response res) {
-      final List<Product> fetchedProductsList = [];
-      final List<dynamic> productsListData = json.decode(res.body);
-      if (productsListData == null) {
-        _isLoading = false;
-        notifyListeners();
-        return;
-      }
-      productsListData.forEach((productData) {
-        final Product product = Product(
-            id: productData['id'],
-            title: productData['title'],
-            desc: productData['desc'],
-            userEmail: productData['userEmail'],
-            userId: productData['userId'],
-            price: productData['price'].toDouble(),
-            image: productData['image']);
-        fetchedProductsList.add(product);
-      });
-      _products = fetchedProductsList;
-      _isLoading = false;
-      notifyListeners();
-    });
-  }
-
-  Future<Null> addProduct(
-      {String title,
-      String desc,
-      double price,
-      String image,
-      bool isMyFavorite}) {
-    _isLoading = true;
-    notifyListeners();
-    final Map<String, dynamic> productData = {
-      'title': title,
-      'price': price,
-      'desc': desc,
-      'image':
-          'http://www.360changshi.com/uploadfile/2016/0120/20160120070821101.jpg',
-      'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
-    };
-
-    return http.post('http://localhost:3000/products',
-        body: json.encode(productData),
-        // convert a map to json
-        headers: {
-          'content-type': 'application/json'
-        }).then((http.Response res) {
-      final Map<String, dynamic> productData = json.decode(res.body);
-      final Product product = Product(
-          id: productData['id'],
-          title: title,
-          desc: desc,
-          price: price,
-          image: image,
-          isMyFavorite: isMyFavorite,
-          userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
-      _products.add(product);
-      _isLoading = false;
-      notifyListeners();
-    });
-  }
 }
 
 // 用户信息model
 mixin UserModel on CollectedProducts {
-  void login(String email, String password) {
+  Future<Map<String, dynamic>> authenticate(String email, String password,
+      [AuthMode mode = AuthMode.Login]) async {
     _authenticatedUser = User(id: '435GDSF', email: email, password: password);
+    final Map<String, dynamic> _authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+    _isLoading = true;
+    notifyListeners();
+    http.Response response;
+    String authApi;
+
+    if (mode == AuthMode.Login) {
+      authApi =
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyCvfxfRe_1ekN9D4LIXJCT3F4JR7_S8ArE';
+    } else {
+      authApi =
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCvfxfRe_1ekN9D4LIXJCT3F4JR7_S8ArE';
+    }
+
+    response = await http.post(authApi,
+        // json string
+        body: json.encode(_authData),
+        headers: {'Content-Type': 'application/json'});
+
+    bool status = false;
+    String errmsg = 'login error';
+    Map<String, dynamic> responseData = json.decode(response.body);
+    if (responseData.containsKey('idToken')) {
+      status = true;
+      errmsg = '';
+    } else {
+      errmsg = responseData['error']['message'];
+    }
+    _isLoading = false;
+    notifyListeners();
+    return {'status': status, 'errmsg': errmsg};
   }
 }
 
@@ -160,7 +129,76 @@ mixin ProductsModel on CollectedProducts {
     // _products.removeAt(index);
     _isLoading = true;
     notifyListeners();
-    http.delete('http://localhost:3000/products/$id').then((http.Response res){
+    http.delete('http://localhost:3000/products/$id').then((http.Response res) {
+      _isLoading = false;
+      notifyListeners();
+    });
+  }
+
+  Future<Null> fetchProduct() {
+    _isLoading = true;
+    notifyListeners();
+    // need to handle http error
+    return http.get('http://localhost:3000/products').then((http.Response res) {
+      final List<Product> fetchedProductsList = [];
+      final List<dynamic> productsListData = json.decode(res.body);
+      if (productsListData == null) {
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+      productsListData.forEach((productData) {
+        final Product product = Product(
+            id: productData['id'],
+            title: productData['title'],
+            desc: productData['desc'],
+            userEmail: productData['userEmail'],
+            userId: productData['userId'],
+            price: productData['price'].toDouble(),
+            image: productData['image']);
+        fetchedProductsList.add(product);
+      });
+      _products = fetchedProductsList;
+      _isLoading = false;
+      notifyListeners();
+    });
+  }
+
+  Future<Null> addProduct(
+      {String title,
+      String desc,
+      double price,
+      String image,
+      bool isMyFavorite}) {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'price': price,
+      'desc': desc,
+      'image':
+          'http://www.360changshi.com/uploadfile/2016/0120/20160120070821101.jpg',
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
+    };
+
+    return http.post('http://localhost:3000/products',
+        body: json.encode(productData),
+        // convert a map to json
+        headers: {
+          'content-type': 'application/json'
+        }).then((http.Response res) {
+      final Map<String, dynamic> productData = json.decode(res.body);
+      final Product product = Product(
+          id: productData['id'],
+          title: title,
+          desc: desc,
+          price: price,
+          image: image,
+          isMyFavorite: isMyFavorite,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+      _products.add(product);
       _isLoading = false;
       notifyListeners();
     });

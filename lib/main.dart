@@ -39,6 +39,7 @@ class _MyApp extends State<MyApp> {
         routes: <String, WidgetBuilder> {
           // route registry
           '/': (BuildContext context) => AuthPage(),
+          '/login': (BuildContext context) => AuthPage(),
           '/products': (BuildContext context) => ProductsPage(model),
           '/admin': (BuildContext context) => ProductsAdminPage(model),
         },

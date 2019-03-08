@@ -23,8 +23,6 @@ class _ProductsPageState extends State<ProductsPage> {
 
   Widget _buildProductsList(MainModel model){
     Widget content = Center(child: Text('No Products Found!'),);
-    // bug
-    print(model.displayedProductsList);
     if(model.displayedProductsList.length > 0 && !model.isLoading){
       content = Products();
     } else if(model.isLoading){
@@ -46,7 +44,6 @@ class _ProductsPageState extends State<ProductsPage> {
           AppBar(
             automaticallyImplyLeading: false,
             title: Text('menu bar'),
-            
           ),
           ListTile(
             leading:Icon(Icons.edit),
@@ -58,9 +55,9 @@ class _ProductsPageState extends State<ProductsPage> {
             },
           ),
           ListTile(
-            title: Text('unknowroute'),
+            title: Text('login'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/sdfasf');
+              Navigator.pushReplacementNamed(context, '/login');
             },
           )
         ],),),
