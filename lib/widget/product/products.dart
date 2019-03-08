@@ -10,24 +10,11 @@ class Products extends StatelessWidget {
     print('[Products Widget] constructor');
   }
 
-  Widget _buildProductList(List<Product> products) {
-    // Widget productList = Center(
-    //   child: Text('product list is empty'),
-    // );
-    // if (products.length > 0) {
-    //   productList = ListView.builder(
-    //     // Creates a scrollable, linear array of widgets that are created on demand.
-    //     itemBuilder: (BuildContext context, int index){
-    //       return ProductCard(index);
-    //     },
-    //     itemCount: products.length,
-    //   );
-    // }
-    // return productList;
+  Widget _buildProductList(List<Product> products, Model model) {
     return ListView.builder(
         // Creates a scrollable, linear array of widgets that are created on demand.
         itemBuilder: (BuildContext context, int index){
-          return ProductCard(index);
+          return ProductCard(products[index], model, index);
         },
         itemCount: products.length,
       );
@@ -38,7 +25,7 @@ class Products extends StatelessWidget {
     print('[Products Widget] build');
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model){
-        return _buildProductList(model.displayedProductsList);
+        return _buildProductList(model.displayedProductsList, model);
       },
     );
   }

@@ -3,11 +3,10 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scope-model/main.dart';
 import '../model/product.dart';
 
-
 class ProductEdit extends StatefulWidget {
-  final int id;
+  final String productId;
   final MainModel model;
-  ProductEdit(this.id, this.model) {
+  ProductEdit(this.productId, this.model) {
     print('ProductEdit widget constructor');
   }
 
@@ -18,35 +17,26 @@ class ProductEdit extends StatefulWidget {
 }
 
 class _ProductEdit extends State<ProductEdit> {
-
-  String title = '';
-
+  Product _product;
   final Map<String, dynamic> _formData = {
     'title': null,
     'price': null,
-    'desc': null,
-    'image': null
+    'desc': null
   };
-
-  void _getProduct(){
-    widget.model.getProduct(widget.id).then((Product res) =>
-      this.setState((){
-        _formData['title'] = res.title;
-        _formData['desc'] = res.desc;
-        _formData['price'] = res.price;
-        _formData['image'] = res.image;
-        _formData['isMyFavorite'] = res.isMyFavorite;
-        title = res.title;
-        print('editing productid ${res.id}');
-      })
-    );
-  }
 
   @override
   void initState() {
-    if(widget.id != null){
-      _getProduct();
+    if(widget.productId != null){
+      widget.model.getProduct(widget.productId).then((Product product){
+        setState((){
+          _product = product;
+          _formData['title'] = product.title;
+          _formData['desc'] = product.desc;
+          _formData['price'] = product.price;
+        });
+      });
     }
+    print('editing productid ${widget.productId}');
     super.initState();
   }
 
@@ -98,9 +88,9 @@ class _ProductEdit extends State<ProductEdit> {
   }
 
   Widget _buildSubmitBtn(MainModel model) {
-    return RaisedButton(
+    return model.isLoading ? Center(child: CircularProgressIndicator(),) : RaisedButton(
       textColor: Colors.white,
-      child: model.isLoading ? CircularProgressIndicator() : Text('提交'),
+      child: Text('提交'),
       onPressed: () => _submitForms(model),
     );
   }
@@ -110,24 +100,27 @@ class _ProductEdit extends State<ProductEdit> {
       return;
     }
     _formKey.currentState.save();
-    if (widget.id == null) {
-      model.addProduct(        
+    if (widget.productId == null) {
+      model.addProduct(
         title: _formData['title'],
         desc: _formData['desc'],
         price: _formData['price'],
         image: _formData['image'],
-        isMyFavorite: false)
-        .then((_) => Navigator.pushReplacementNamed(context, '/products'));
+        isMyFavorite: false
+      )
+      .then((_) => Navigator.pushReplacementNamed(context, '/products'));
     } else {
       model.updateProduct(
-        widget.id,         
+        widget.productId,
         title: _formData['title'],
         desc: _formData['desc'],
         price: _formData['price'],
-        image: _formData['image'],
-        isMyFavorite: _formData['isMyFavorite']
-        )
-        .then((_) =>  Navigator.pushReplacementNamed(context, '/products'));
+        image: _product.image,
+        userEmail: _product.userEmail,
+        userId: _product.userId,
+        isMyFavorite: _product.isMyFavorite
+      )
+      .then((_) =>  Navigator.pushReplacementNamed(context, '/products'));
     }
   }
 
@@ -148,15 +141,16 @@ class _ProductEdit extends State<ProductEdit> {
               padding: EdgeInsets.symmetric(horizontal: paddingWidth / 2),
               // ListView always take full avialble width
               children: <Widget>[
-                _createTitleTextFiled(widget.id == null
+                _createTitleTextFiled(widget.productId == null
                     ? null
                     : _formData['title']),
-                _createPriceTextFiled(widget.id == null
+                _createPriceTextFiled(widget.productId == null
                     ? null
                     : _formData['price']),
-                _createDescTextFiled(widget.id == null
+                _createDescTextFiled(widget.productId == null
                     ? null
                     : _formData['desc']),
+                SizedBox(height: 10.0,),
                 _buildSubmitBtn(model),
                 // GestureDetector(
                 //   onTap: (){
@@ -175,11 +169,11 @@ class _ProductEdit extends State<ProductEdit> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return widget.id == null
+        return widget.productId == null
           ? _buildProductContent(context, model)
           : Scaffold(
               appBar: AppBar(
-                title: Text('Edit $title'),
+                title: Text('Edit product'),
               ),
               body: model.isLoading 
                 ? Center(child: CircularProgressIndicator(),) 

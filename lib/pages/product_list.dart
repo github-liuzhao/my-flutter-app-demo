@@ -25,10 +25,10 @@ class _ProductListState extends State<ProductList> {
 
   Widget _buildItemBuilder(BuildContext context, int index, List<Product> products, Function delProductItem){
     return Dismissible(
-      key: Key(products[index].id.toString()),
+      key: Key(products[index].id),
       onDismissed: (DismissDirection direction){
         if(direction == DismissDirection.endToStart){
-          delProductItem(products[index].id);
+          delProductItem(products[index].id, index);
         }
       },
       background: Container(

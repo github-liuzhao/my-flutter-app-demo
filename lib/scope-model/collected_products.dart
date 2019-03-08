@@ -20,7 +20,7 @@ mixin CollectedProducts on Model {
 mixin UserModel on CollectedProducts {
   Future<Map<String, dynamic>> authenticate(String email, String password,
       [AuthMode mode = AuthMode.Login]) async {
-    _authenticatedUser = User(id: '435GDSF', email: email, password: password);
+    // _authenticatedUser = User(id: '435GDSF', email: email, password: password);
     final Map<String, dynamic> _authData = {
       'email': email,
       'password': password,
@@ -43,11 +43,15 @@ mixin UserModel on CollectedProducts {
         // json string
         body: json.encode(_authData),
         headers: {'Content-Type': 'application/json'});
-
     bool status = false;
     String errmsg = 'login error';
     Map<String, dynamic> responseData = json.decode(response.body);
     if (responseData.containsKey('idToken')) {
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+      print(_authenticatedUser.token);
       status = true;
       errmsg = '';
     } else {
@@ -110,58 +114,61 @@ mixin ProductsModel on CollectedProducts {
     notifyListeners();
   }
 
-  void toggleDisplayedProductsList(int index) {
-    final curProduct = products[index];
+  void toggleDisplayedProductsList(int index, Product product) {
     final newProduct = Product(
-        id: curProduct.id,
-        title: curProduct.title,
-        desc: curProduct.desc,
-        price: curProduct.price,
-        image: curProduct.image,
-        userEmail: curProduct.userEmail,
-        userId: curProduct.userId,
-        isMyFavorite: !curProduct.isMyFavorite);
+        id: product.id,
+        title: product.title,
+        desc: product.desc,
+        price: product.price,
+        image: product.image,
+        userEmail: product.userEmail,
+        userId: product.userId,
+        isMyFavorite: !product.isMyFavorite);
     _products[index] = newProduct;
+
     notifyListeners();
   }
 
-  void delProductItem(int id) {
-    // _products.removeAt(index);
+  Future<Null> delProductItem(String id, int index) async{
     _isLoading = true;
+    _products.removeAt(index);
     notifyListeners();
-    http.delete('http://localhost:3000/products/$id').then((http.Response res) {
-      _isLoading = false;
-      notifyListeners();
-    });
+    await http.delete('https://aapi-e2ab8.firebaseio.com/products/$id.json?auth=${_authenticatedUser.token}');
+    _isLoading = false;
+    notifyListeners();
   }
 
-  Future<Null> fetchProduct() {
+  Future<Null> fetchProduct() async {
     _isLoading = true;
     notifyListeners();
-    // need to handle http error
-    return http.get('http://localhost:3000/products').then((http.Response res) {
-      final List<Product> fetchedProductsList = [];
-      final List<dynamic> productsListData = json.decode(res.body);
-      if (productsListData == null) {
-        _isLoading = false;
-        notifyListeners();
-        return;
-      }
-      productsListData.forEach((productData) {
-        final Product product = Product(
-            id: productData['id'],
-            title: productData['title'],
-            desc: productData['desc'],
-            userEmail: productData['userEmail'],
-            userId: productData['userId'],
-            price: productData['price'].toDouble(),
-            image: productData['image']);
-        fetchedProductsList.add(product);
-      });
-      _products = fetchedProductsList;
+
+    http.Response response =
+        await http.get('https://aapi-e2ab8.firebaseio.com/products.json?auth=${_authenticatedUser.token}');
+
+    print(response.body);
+    final List<Product> fetchedProductsList = [];
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    if (responseData == null || responseData['error'] != null) {
       _isLoading = false;
       notifyListeners();
+      return;
+    }
+
+    responseData.forEach((String productId, dynamic productData) {
+      final Product product = Product(
+          id: productId,
+          title: productData['title'],
+          desc: productData['desc'],
+          userEmail: productData['userEmail'],
+          userId: productData['userId'],
+          price: productData['price'].toDouble(),
+          image: productData['image']);
+      fetchedProductsList.add(product);
     });
+
+    _products = fetchedProductsList;
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<Null> addProduct(
@@ -169,7 +176,7 @@ mixin ProductsModel on CollectedProducts {
       String desc,
       double price,
       String image,
-      bool isMyFavorite}) {
+      bool isMyFavorite}) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productData = {
@@ -178,90 +185,80 @@ mixin ProductsModel on CollectedProducts {
       'desc': desc,
       'image':
           'http://www.360changshi.com/uploadfile/2016/0120/20160120070821101.jpg',
+      'isMyFavorite': isMyFavorite,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
     };
 
-    return http.post('http://localhost:3000/products',
+    http.Response response = await http.post(
+        'https://aapi-e2ab8.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
         body: json.encode(productData),
-        // convert a map to json
-        headers: {
-          'content-type': 'application/json'
-        }).then((http.Response res) {
-      final Map<String, dynamic> productData = json.decode(res.body);
-      final Product product = Product(
-          id: productData['id'],
-          title: title,
-          desc: desc,
-          price: price,
-          image: image,
-          isMyFavorite: isMyFavorite,
-          userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
-      _products.add(product);
-      _isLoading = false;
-      notifyListeners();
-    });
+        headers: {'content-type': 'application/json'});
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    print(responseData);
+    final Product product = Product(
+        id: responseData['id'],
+        title: title,
+        desc: desc,
+        price: price,
+        image: image,
+        isMyFavorite: isMyFavorite,
+        userEmail: _authenticatedUser.email,
+        userId: _authenticatedUser.id);
+    _products.add(product);
+    _isLoading = false;
+    notifyListeners();
   }
 
-  Future<Product> getProduct(int id) {
+  Future<Product> getProduct(String id) async {
     _isLoading = true;
     notifyListeners();
-    return http
-        .get('http://localhost:3000/products/$id')
-        .then((http.Response res) {
-      final Map<String, dynamic> productData = json.decode(res.body);
-      final Product product = Product(
-        title: productData['title'],
-        desc: productData['desc'],
-        id: productData['id'],
-        price: productData['price'].toDouble(),
-        image: productData['image'],
-        userEmail: productData['userEmail'],
-        isMyFavorite: productData['isMyFavorite'],
-        userId: productData['userId'],
-      );
-      _isLoading = false;
-      notifyListeners();
-      return product;
-    });
+    http.Response response =
+        await http.get('https://aapi-e2ab8.firebaseio.com/products/$id.json?auth=${_authenticatedUser.token}');
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    final Product product = Product(
+      title: responseData['title'],
+      desc: responseData['desc'],
+      id: responseData['id'],
+      price: responseData['price'].toDouble(),
+      image: responseData['image'],
+      userEmail: responseData['userEmail'],
+      isMyFavorite: responseData['isMyFavorite'],
+      userId: responseData['userId'],
+    );
+    _isLoading = false;
+    notifyListeners();
+    return product;
   }
 
-  Future<Null> updateProduct(int id,
+  Future<Null> updateProduct(String id,
       {String title,
       String desc,
       double price,
+      bool isMyFavorite,
       String image,
-      bool isMyFavorite}) {
+      String userEmail,
+      String userId}) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> updateProdct = {
       'title': title,
       'desc': desc,
-      'image': image,
       'price': price,
-      'isMyFavorite': isMyFavorite,
-      'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userEmail':userEmail,
+      'userId':userId,
+      'image': image,
+      'isMyFavorite': isMyFavorite
     };
-    return http.put('http://localhost:3000/products/$id',
+    http.Response response = await http.put(
+        'https://aapi-e2ab8.firebaseio.com/products/$id.json?auth=${_authenticatedUser.token}',
         body: json.encode(updateProdct),
-        headers: {
-          'content-type': 'application/json'
-        }).then((http.Response res) {
-      // final Product product = Product(
-      //     id: id,
-      //     title: title,
-      //     desc: desc,
-      //     price: price,
-      //     image: image,
-      //     isMyFavorite: isMyFavorite,
-      //     userEmail: _authenticatedUser.email,
-      //     userId: _authenticatedUser.id);
-      // _products[index] = product;
-      _isLoading = false;
-      notifyListeners();
-    });
+        headers: {'content-type': 'application/json'});
+
+    print('updata product $id: ${response.body}');
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   // void selectProduct(int index) {

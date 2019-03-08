@@ -15,6 +15,7 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
+  
   @override
   void initState() {
     widget.model.fetchProduct();

@@ -113,7 +113,7 @@ class _AuthState extends State<AuthPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('something wrong'),
+            title: _authMode == AuthMode.Login ?  Text('Login Error') :Text('Signup Error'),
             content: Text(response['errmsg']),
             actions: <Widget>[
               FlatButton(child: Text('ok'), 

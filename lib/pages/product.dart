@@ -9,40 +9,30 @@ import '../scope-model/main.dart';
 import '../widget/ui_elements/title_default.dart';
 import '../model/product.dart';
 
-class ProductPage extends StatelessWidget {
-  final int productIndex;
-  ProductPage(this.productIndex);
-  // no matter if load data with route or if you load them by embedding them into anther widget,
-  // use the constructor to pass data around
+class ProductPage extends StatefulWidget {
+  final String productId;
+  final MainModel model;
+  ProductPage(this.productId, this.model);
 
-  // void _showWarningDilog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('提示'),
-  //         content: Text('heheheheh'),
-  //         actions: <Widget>[
-  //           FlatButton(
-  //             child: Text('cancel'),
-  //             onPressed: () {
-  //               Navigator.pop(context, 'cancel');
-  //             },
-  //           ),
-  //           FlatButton(
-  //             child: Text('ok'),
-  //             onPressed: () {
-  //               Navigator.pop(context, 'ok');
-  //               Navigator.pop(context, true);
-  //             },
-  //           )
-  //         ],
-  //       );
-  //     }
-  //   ).then((value) {
-  //     print('dialog $value');
-  //   });
-  // }
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductPageState();
+  }
+}
+  
+class _ProductPageState extends State<ProductPage>{
+  Product product;
+
+  @override
+  void initState() {
+    widget.model.getProduct(widget.productId).then((Product prodct){
+      setState((){
+        product = prodct;
+      });
+      print('fetched product data');
+    });
+    super.initState();
+  }
 
   Widget _buildTitleAndPrice(Product product){
     return Row(
@@ -57,6 +47,7 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('building product content');
     // Creates a widget that registers a callback to veto attempts by the user to dismiss the enclosing [ModalRoute].
     return WillPopScope(
       // 监听页面pop事件，可以阻止pop发生
@@ -65,12 +56,11 @@ class ProductPage extends StatelessWidget {
         return Future.value(false);
       },
       child: ScopedModelDescendant(builder: (BuildContext context, Widget child, MainModel model){
-        final Product product = model.products[productIndex];
         return Scaffold(
           appBar: AppBar(
-            title: Text(product.title),
+            title: model.isLoading ? Text('...') : Text(product.title),
           ),
-          body: Container(
+          body: model.isLoading ? Center(child: CircularProgressIndicator(),) : Container(
             // margin: EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center, // 垂直布局，cross即水平居中，外容器宽度默认跟内部最宽子元素宽度相同
