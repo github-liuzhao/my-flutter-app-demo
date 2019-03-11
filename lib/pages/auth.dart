@@ -107,7 +107,7 @@ class _AuthState extends State<AuthPage> {
     _loginForm.currentState.save();
     Map<String, dynamic> response = await authenticate(_email, _password, _authMode);
     if (response['status']) {
-      Navigator.pushReplacementNamed(context, '/products');
+      // Navigator.pushReplacementNamed(context, '/');
     } else if (response['errmsg'] != null) {
       showDialog(
         context: context,

@@ -4,8 +4,10 @@
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:rxdart/rxdart.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 import '../model/product.dart';
 import '../model/auth.dart';
@@ -18,9 +20,23 @@ mixin CollectedProducts on Model {
 
 // 用户信息model
 mixin UserModel on CollectedProducts {
-  Future<Map<String, dynamic>> authenticate(String email, String password,
-      [AuthMode mode = AuthMode.Login]) async {
-    // _authenticatedUser = User(id: '435GDSF', email: email, password: password);
+  // rxdart
+  PublishSubject<bool> _userSubject = PublishSubject();
+  Timer _authTimer;
+
+  User get user{
+    return _authenticatedUser;
+  }
+  
+  PublishSubject<bool> get userSubject {
+    return _userSubject;
+  }
+
+  Future<Map<String, dynamic>> authenticate(
+    String email, 
+    String password,
+    [AuthMode mode = AuthMode.Login]
+  ) async {
     final Map<String, dynamic> _authData = {
       'email': email,
       'password': password,
@@ -29,37 +45,99 @@ mixin UserModel on CollectedProducts {
     _isLoading = true;
     notifyListeners();
     http.Response response;
-    String authApi;
-
-    if (mode == AuthMode.Login) {
-      authApi =
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyCvfxfRe_1ekN9D4LIXJCT3F4JR7_S8ArE';
-    } else {
-      authApi =
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCvfxfRe_1ekN9D4LIXJCT3F4JR7_S8ArE';
+    String authApi = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyCvfxfRe_1ekN9D4LIXJCT3F4JR7_S8ArE';
+    if (mode == AuthMode.Signup) {
+      authApi = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCvfxfRe_1ekN9D4LIXJCT3F4JR7_S8ArE';
     }
 
-    response = await http.post(authApi,
-        // json string
+    try {
+
+      response = await http.post(authApi,
         body: json.encode(_authData),
-        headers: {'Content-Type': 'application/json'});
-    bool status = false;
-    String errmsg = 'login error';
-    Map<String, dynamic> responseData = json.decode(response.body);
-    if (responseData.containsKey('idToken')) {
-      _authenticatedUser = User(
+        headers: {'Content-Type': 'application/json'}
+      );
+      bool status = false;
+      String errmsg = 'login error';
+      print('responseData $response');
+      Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData.containsKey('idToken')) {
+        _authenticatedUser = User(
           id: responseData['localId'],
           email: email,
-          token: responseData['idToken']);
-      print(_authenticatedUser.token);
-      status = true;
-      errmsg = '';
-    } else {
-      errmsg = responseData['error']['message'];
+          token: responseData['idToken']
+        );
+        _userSubject.add(true);
+        final DateTime now = DateTime.now();
+        final DateTime expiryTime = now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+        setAuthTimeout(int.parse(responseData['expiresIn']));
+        // 存储登陆信息
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('userEmail', email);
+        await prefs.setString('localId', responseData['localId']);
+        await prefs.setString('idToken', responseData['idToken']);
+        // 存储账号过期时间
+        await prefs.setString('expiryTime', expiryTime.toIso8601String());
+        status = true;
+        errmsg = '';
+      } else {
+        errmsg = responseData['error']['message'];
+      }
+
+      _isLoading = false;
+      notifyListeners();
+      return {'status': status, 'errmsg': errmsg};
+      
+    } catch (e) {
+
+      _isLoading = false;
+      notifyListeners();
+      return {'status': false, 'errmsg': 'SocketException: OS Error: Connection reset by peer'};
     }
-    _isLoading = false;
-    notifyListeners();
-    return {'status': status, 'errmsg': errmsg};
+   
+  }
+
+  // 已登陆用户通过本地有效token自动登陆
+  void autoAuthenticate() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String idToken = prefs.getString('idToken');
+    String expiryTime = prefs.getString('expiryTime');
+    if(idToken != null){
+      final DateTime now = DateTime.now();
+      final parsedExpiryTime = DateTime.parse(expiryTime);
+      // 判断账号是否过期
+      if(parsedExpiryTime.isBefore(now)){
+        _authenticatedUser = null;
+        notifyListeners();
+        return;
+      }
+      final String userEmail = prefs.getString('userEmail');
+      final String localId = prefs.getString('localId');
+      final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
+      _authenticatedUser = User(
+        id: localId,
+        email: userEmail,
+        token: idToken
+      );
+      print('autoAuthenticate ${_authenticatedUser.email}');
+      _userSubject.add(true);
+      setAuthTimeout(tokenLifespan);
+    }
+  }
+
+  Future<Null> logout() async {
+    _authenticatedUser = null;
+    // 清理计时
+    _authTimer.cancel();
+    _userSubject.add(false);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('userEmail');
+    prefs.remove('localId');
+    prefs.remove('idToken');
+    print('user logout');
+  }
+
+  void setAuthTimeout(int time){
+    _authTimer = Timer(Duration(seconds: time), logout);
   }
 }
 
@@ -92,8 +170,8 @@ mixin ProductsModel on CollectedProducts {
   List<Product> get displayedProductsList {
     if (_showFavoriteListStatus) {
       return _products
-          .where((Product product) => product.isMyFavorite == true)
-          .toList();
+        .where((Product product) => product.isMyFavorite == true)
+        .toList();
     }
     return List.from(_products);
   }
@@ -145,7 +223,6 @@ mixin ProductsModel on CollectedProducts {
     http.Response response =
         await http.get('https://aapi-e2ab8.firebaseio.com/products.json?auth=${_authenticatedUser.token}');
 
-    print(response.body);
     final List<Product> fetchedProductsList = [];
     final Map<String, dynamic> responseData = json.decode(response.body);
     if (responseData == null || responseData['error'] != null) {
@@ -195,7 +272,6 @@ mixin ProductsModel on CollectedProducts {
         body: json.encode(productData),
         headers: {'content-type': 'application/json'});
     final Map<String, dynamic> responseData = json.decode(response.body);
-    print(responseData);
     final Product product = Product(
         id: responseData['id'],
         title: title,
@@ -250,13 +326,10 @@ mixin ProductsModel on CollectedProducts {
       'image': image,
       'isMyFavorite': isMyFavorite
     };
-    http.Response response = await http.put(
-        'https://aapi-e2ab8.firebaseio.com/products/$id.json?auth=${_authenticatedUser.token}',
-        body: json.encode(updateProdct),
-        headers: {'content-type': 'application/json'});
-
-    print('updata product $id: ${response.body}');
-
+    await http.put(
+      'https://aapi-e2ab8.firebaseio.com/products/$id.json?auth=${_authenticatedUser.token}',
+      body: json.encode(updateProdct),
+      headers: {'content-type': 'application/json'});
     _isLoading = false;
     notifyListeners();
   }

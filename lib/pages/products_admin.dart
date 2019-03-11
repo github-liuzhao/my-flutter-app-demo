@@ -19,7 +19,7 @@ class ProductsAdminPage extends StatelessWidget {
             leading: Icon(Icons.list),
             title: Text('products'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/products');
+              Navigator.pushReplacementNamed(context, '/');
               // Navigator.pushNamed(context, '/');
             },
           )

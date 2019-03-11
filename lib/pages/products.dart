@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scope-model/main.dart';
 import '../widget/product/products.dart';
+import '../widget/ui_elements/logout_button.dart';
 
 class ProductsPage extends StatefulWidget {
   final MainModel model;
@@ -55,12 +56,7 @@ class _ProductsPageState extends State<ProductsPage> {
               Navigator.pushReplacementNamed(context, '/admin');
             },
           ),
-          ListTile(
-            title: Text('login'),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          )
+          LogoutButton(),
         ],),),
         appBar: AppBar(
           title: Text('Products'),

@@ -108,7 +108,7 @@ class _ProductEdit extends State<ProductEdit> {
         image: _formData['image'],
         isMyFavorite: false
       )
-      .then((_) => Navigator.pushReplacementNamed(context, '/products'));
+      .then((_) => Navigator.pushReplacementNamed(context, '/'));
     } else {
       model.updateProduct(
         widget.productId,
@@ -120,7 +120,7 @@ class _ProductEdit extends State<ProductEdit> {
         userId: _product.userId,
         isMyFavorite: _product.isMyFavorite
       )
-      .then((_) =>  Navigator.pushReplacementNamed(context, '/products'));
+      .then((_) =>  Navigator.pushReplacementNamed(context, '/'));
     }
   }
 
