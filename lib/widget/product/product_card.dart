@@ -60,7 +60,9 @@ class _ProductCardState extends State<ProductCard> {
                 IconButton(
                     icon: Icon(Icons.info_outline),
                     color: Theme.of(context).accentColor,
-                    onPressed: () {Navigator.pushNamed<bool>(context, '/product/' + widget.product.id);}),
+                    onPressed: () {
+                      Navigator.pushNamed<bool>(context, '/product/' + widget.product.id);
+                  }),
                 IconButton(
                     icon: widget.product.isMyFavorite
                         ? Icon(Icons.favorite)

@@ -192,8 +192,36 @@ mixin ProductsModel on CollectedProducts {
     notifyListeners();
   }
 
-  void toggleDisplayedProductsList(int index, Product product) {
+  void toggleDisplayedProductsList(int index, Product product) async{
+
+    final bool newFavoriteStatus = !product.isMyFavorite;
     final newProduct = Product(
+      id: product.id,
+      title: product.title,
+      desc: product.desc,
+      price: product.price,
+      image: product.image,
+      userEmail: product.userEmail,
+      userId: product.userId,
+      isMyFavorite: newFavoriteStatus);
+    _products[index] = newProduct;
+    notifyListeners();
+
+    http.Response response;
+
+    if (newFavoriteStatus) {
+      response = await http.put(
+        'https://aapi-e2ab8.firebaseio.com/products/${product.id}/wishlistusers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
+        body: json.encode(true)
+      );
+    } else {
+      response = await http.delete(
+        'https://aapi-e2ab8.firebaseio.com/products/${product.id}/wishlistusers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
+      );
+    }
+
+    if(response.statusCode != 200 && response.statusCode != 201){
+      final newProduct = Product(
         id: product.id,
         title: product.title,
         desc: product.desc,
@@ -201,10 +229,10 @@ mixin ProductsModel on CollectedProducts {
         image: product.image,
         userEmail: product.userEmail,
         userId: product.userId,
-        isMyFavorite: !product.isMyFavorite);
-    _products[index] = newProduct;
-
-    notifyListeners();
+        isMyFavorite: !newFavoriteStatus);
+      _products[index] = newProduct;
+      notifyListeners();
+    }
   }
 
   Future<Null> delProductItem(String id, int index) async{
@@ -239,6 +267,7 @@ mixin ProductsModel on CollectedProducts {
           userEmail: productData['userEmail'],
           userId: productData['userId'],
           price: productData['price'].toDouble(),
+          isMyFavorite: productData['wishlistusers'] == null ? false : (productData['wishlistusers'] as Map<String, dynamic>).containsKey(_authenticatedUser.id),
           image: productData['image']);
       fetchedProductsList.add(product);
     });

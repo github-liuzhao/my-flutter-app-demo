@@ -55,7 +55,10 @@ class _MyApp extends State<MyApp> {
         ),
         routes: <String, WidgetBuilder> {
           // route registry 
-          '/': (BuildContext context) => _isAuthenticated ? ProductsPage(model) : AuthPage(),
+          '/': (BuildContext context) {
+            print('route / status: $_isAuthenticated');
+            return _isAuthenticated ? ProductsPage(model) : AuthPage();
+          },
           '/admin': (BuildContext context) => _isAuthenticated ? ProductsAdminPage(model) : AuthPage(),
         },
         onGenerateRoute: (RouteSettings settings) {

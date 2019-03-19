@@ -32,7 +32,7 @@ class _ProductsPageState extends State<ProductsPage> {
     }
     // 下拉刷新
     return RefreshIndicator(child: content, onRefresh: (){
-      model.fetchProduct();
+      return model.fetchProduct();
     },);
   }
 
